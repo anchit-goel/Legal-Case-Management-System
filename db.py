@@ -17,17 +17,32 @@ def get_connection():
         MYSQL_PASSWORD = os.environ.get("MYSQLPASSWORD", os.environ.get("MYSQL_PASSWORD", ""))
         MYSQL_DB = os.environ.get("MYSQLDATABASE", os.environ.get("MYSQL_DATABASE", "legal_db"))
         
-        connection = mysql.connector.connect(
-            host=MYSQL_HOST,
-            port=MYSQL_PORT,
-            user=MYSQL_USER,
-            password=MYSQL_PASSWORD,
-            database=MYSQL_DB,
-            # Cloud auth plugin support
-            auth_plugin='mysql_native_password',
-            connection_timeout=10
-        )
-        return connection
+        try:
+            connection = mysql.connector.connect(
+                host=MYSQL_HOST, port=MYSQL_PORT, user=MYSQL_USER,
+                password=MYSQL_PASSWORD, database=MYSQL_DB,
+                auth_plugin='mysql_native_password', connection_timeout=10
+            )
+            return connection
+        except Error as err:
+            if err.errno == 1049: # Unknown database
+                temp_conn = mysql.connector.connect(
+                    host=MYSQL_HOST, port=MYSQL_PORT, user=MYSQL_USER,
+                    password=MYSQL_PASSWORD, auth_plugin='mysql_native_password', connection_timeout=10
+                )
+                temp_cursor = temp_conn.cursor()
+                temp_cursor.execute(f"CREATE DATABASE IF NOT EXISTS {MYSQL_DB}")
+                temp_conn.commit()
+                temp_cursor.close()
+                temp_conn.close()
+                
+                return mysql.connector.connect(
+                    host=MYSQL_HOST, port=MYSQL_PORT, user=MYSQL_USER,
+                    password=MYSQL_PASSWORD, database=MYSQL_DB,
+                    auth_plugin='mysql_native_password', connection_timeout=10
+                )
+            else:
+                raise err
     except Error as e:
         print(f"MySQL connection failed: {e}")
         return None
