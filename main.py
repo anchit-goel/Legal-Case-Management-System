@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, APIRouter
 from operations import *
+from db import test_connection
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
@@ -14,6 +15,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+def startup_event():
+    print("Initializing Database...")
+    ok, ver = test_connection()
+    if ok:
+        print(f"Database Connected. MySQL Version: {ver}")
+    else:
+        print("Database Connection Failed!")
 
 class CaseCreate(BaseModel):
     case_number: str

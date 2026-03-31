@@ -32,8 +32,56 @@ def get_connection():
         print(f"MySQL connection failed: {e}")
         return None
 
+def ensure_tables_exist():
+    connection = get_connection()
+    if not connection:
+        return
+    try:
+        cursor = connection.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS clients (
+                client_id INT PRIMARY KEY AUTO_INCREMENT,
+                first_name VARCHAR(100) NOT NULL,
+                last_name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) UNIQUE,
+                phone VARCHAR(20),
+                address TEXT
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS lawyers (
+                lawyer_id INT PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(100) NOT NULL,
+                specialization VARCHAR(100)
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS cases (
+                case_id INT PRIMARY KEY AUTO_INCREMENT,
+                case_number VARCHAR(50) UNIQUE NOT NULL,
+                case_type VARCHAR(100),
+                status ENUM('Active', 'Closed', 'Pending') DEFAULT 'Active',
+                client_id INT,
+                lawyer_id INT,
+                filing_date DATE,
+                description TEXT,
+                FOREIGN KEY (client_id) REFERENCES clients(client_id) ON DELETE SET NULL,
+                FOREIGN KEY (lawyer_id) REFERENCES lawyers(lawyer_id) ON DELETE SET NULL
+            )
+        """)
+        cursor.execute("SELECT COUNT(*) FROM lawyers")
+        result = cursor.fetchone()
+        if result and result[0] == 0:
+            cursor.execute("INSERT INTO lawyers (name, specialization) VALUES ('Sarah Smith', 'Corporate Law'), ('Michael Johnson', 'Family Law'), ('Patricia Williams', 'Criminal Law')")
+        connection.commit()
+        cursor.close()
+        connection.close()
+    except Error as e:
+        print(f"Table initialization failed: {e}")
+
 def test_connection():
     """Verification for DB connectivity during deployment."""
+    ensure_tables_exist()
     connection = get_connection()
     if connection:
         cursor = connection.cursor()
