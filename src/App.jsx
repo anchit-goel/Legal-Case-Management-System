@@ -8,6 +8,8 @@ import CaseDetails from './pages/CaseDetails';
 import ClientIntake from './pages/ClientIntake';
 import CreateCase from './pages/CreateCase';
 import Clients from './pages/Clients';
+import AddLawyer from './pages/AddLawyer';
+import AddHearing from './pages/AddHearing';
 
 const App = () => {
     return (
@@ -23,6 +25,9 @@ const App = () => {
                         <Route path="/intake" element={<ClientIntake />} />
                         <Route path="/create-case" element={<CreateCase />} />
                         <Route path="/clients" element={<Clients />} />
+                        <Route path="/clients/add" element={<ClientIntake />} />
+                        <Route path="/lawyers/add" element={<AddLawyer />} />
+                        <Route path="/hearings/add" element={<AddHearing />} />
                         <Route path="/calendar" element={<div className="p-10">Calendar Page Coming Soon</div>} />
                         <Route path="/financials" element={<div className="p-10">Financials Page Coming Soon</div>} />
                     </Routes>

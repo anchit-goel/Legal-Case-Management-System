@@ -129,12 +129,72 @@ def create_client(client: ClientCreate):
         print(f"Error adding client: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
+class LawyerCreate(BaseModel):
+    name: str
+    specialization: str
+
+class HearingCreate(BaseModel):
+    case_id: int
+    hearing_date: str
+    notes: str
+
 @router.get("/lawyers")
 def fetch_lawyers():
     try:
         return get_lawyers()
     except Exception as e:
         print(f"Error fetching lawyers: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@router.post("/lawyers")
+def create_lawyer(lawyer: LawyerCreate):
+    try:
+        add_lawyer(lawyer.name, lawyer.specialization)
+        return {"message": "Lawyer added successfully"}
+    except Exception as e:
+        print(f"Error creating lawyer: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@router.get("/hearings")
+def fetch_hearings():
+    try:
+        return get_hearings()
+    except Exception as e:
+        print(f"Error fetching hearings: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@router.post("/hearings")
+def create_hearing(hearing: HearingCreate):
+    try:
+        add_hearing(hearing.case_id, hearing.hearing_date, hearing.notes)
+        return {"message": "Hearing added successfully"}
+    except Exception as e:
+        print(f"Error adding hearing: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@router.get("/dashboard-stats")
+def fetch_dashboard_stats():
+    try:
+        cases = get_all_cases()
+        lawyers = get_lawyers()
+        clients = get_clients()
+        hearings = get_hearings()
+        
+        active_cases = len([c for c in cases if c['status'] == 'Active'])
+        total_cases = len(cases)
+        total_lawyers = len(lawyers)
+        total_clients = len(clients)
+        total_hearings = len(hearings)
+        
+        return {
+            "active_cases": active_cases,
+            "total_cases": total_cases,
+            "total_lawyers": total_lawyers,
+            "total_clients": total_clients,
+            "total_hearings": total_hearings
+        }
+    except Exception as e:
+        print(f"Error fetching stats: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 app.include_router(router)
