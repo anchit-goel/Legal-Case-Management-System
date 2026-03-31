@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, APIRouter
 from operations import *
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -44,11 +44,13 @@ class ClientCreate(BaseModel):
     address: str
 
 # Endpoints
-@app.get("/")
+router = APIRouter()
+
+@router.get("/")
 def home():
     return {"message": "Legal Case Management Backend is running"}
 
-@app.get("/cases")
+@router.get("/cases")
 def fetch_cases():
     try:
         return get_all_cases()
@@ -56,7 +58,7 @@ def fetch_cases():
         print(f"Error fetching cases: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@app.get("/cases/{case_id}")
+@router.get("/cases/{case_id}")
 def fetch_case_details(case_id: int):
     try:
         case = get_case_by_id(case_id)
@@ -69,7 +71,7 @@ def fetch_case_details(case_id: int):
         print(f"Error fetching case details: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@app.post("/cases")
+@router.post("/cases")
 def create_case(case: CaseCreate):
     try:
         add_case(
@@ -85,7 +87,7 @@ def create_case(case: CaseCreate):
         print(f"Error creating case: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@app.put("/cases/{case_id}")
+@router.put("/cases/{case_id}")
 def update_case(case_id: int, data: CaseStatusUpdate):
     try:
         update_case_status(case_id, data.status)
@@ -94,7 +96,7 @@ def update_case(case_id: int, data: CaseStatusUpdate):
         print(f"Error updating case: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@app.get("/clients")
+@router.get("/clients")
 def fetch_clients():
     try:
         return get_clients()
@@ -102,7 +104,7 @@ def fetch_clients():
         print(f"Error fetching clients: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@app.post("/clients")
+@router.post("/clients")
 def create_client(client: ClientCreate):
     try:
         add_client(
@@ -117,13 +119,16 @@ def create_client(client: ClientCreate):
         print(f"Error adding client: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@app.get("/lawyers")
+@router.get("/lawyers")
 def fetch_lawyers():
     try:
         return get_lawyers()
     except Exception as e:
         print(f"Error fetching lawyers: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
+app.include_router(router)
+app.include_router(router, prefix="/api")
 
 # Start configuration for Railway/Render
 if __name__ == "__main__":
