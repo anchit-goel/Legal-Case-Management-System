@@ -65,7 +65,7 @@ const CaseManagement = () => {
   const fetchCases = () => {
     setLoading(true);
     setError(null);
-    fetch(`${import.meta.env.VITE_BACKEND_URL || '/api'}/cases`)
+    fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/cases`)
       .then(async res => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || "Failed to fetch cases");
@@ -82,7 +82,7 @@ const CaseManagement = () => {
 
   const handleStatusUpdate = (caseId, status) => {
     setUpdatingId(caseId);
-    fetch(`${import.meta.env.VITE_BACKEND_URL || '/api'}/cases/${caseId}`, {
+    fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/cases/${caseId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),

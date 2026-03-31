@@ -9,7 +9,7 @@ const Clients = () => {
     const fetchClients = () => {
         setLoading(true);
         setError(null);
-        fetch(`${import.meta.env.VITE_BACKEND_URL || '/api'}/clients`)
+        fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/clients`)
             .then(res => {
                 if (!res.ok) throw new Error('Failed to fetch clients');
                 return res.json();

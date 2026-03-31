@@ -22,8 +22,8 @@ const CreateCase = () => {
     useEffect(() => {
         setLoadingData(true);
         Promise.all([
-            fetch(`${import.meta.env.VITE_BACKEND_URL || '/api'}/clients`).then(r => r.ok ? r.json() : []),
-            fetch(`${import.meta.env.VITE_BACKEND_URL || '/api'}/lawyers`).then(r => r.ok ? r.json() : [])
+            fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/clients`).then(r => r.ok ? r.json() : []),
+            fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/lawyers`).then(r => r.ok ? r.json() : [])
         ])
             .then(([clientsData, lawyersData]) => {
                 setClients(clientsData || []);
@@ -50,7 +50,7 @@ const CreateCase = () => {
         setError(null);
         setSuccess(null);
 
-        fetch(`${import.meta.env.VITE_BACKEND_URL || '/api'}/cases`, {
+        fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/cases`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -16,7 +16,7 @@ const CaseDetails = () => {
 
         setLoading(true);
         setError(null);
-        fetch(`${import.meta.env.VITE_BACKEND_URL || '/api'}/cases/${id}`)
+        fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/cases/${id}`)
             .then(res => {
                 if (!res.ok) {
                     if (res.status === 404) {

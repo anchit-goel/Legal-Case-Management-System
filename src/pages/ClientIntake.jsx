@@ -42,7 +42,7 @@ const ClientIntake = () => {
         setLoading(true);
         setError(null);
         setSuccess(null);
-        fetch(`${import.meta.env.VITE_BACKEND_URL || '/api'}/clients`, {
+        fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/clients`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(form),
