@@ -1,0 +1,132 @@
+from fastapi import FastAPI, HTTPException
+from operations import *
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import os
+
+app = FastAPI()
+
+# Enable CORS for all domains for initial deployment
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class CaseCreate(BaseModel):
+    case_number: str
+    case_type: str
+    client_id: int
+    lawyer_id: int
+    filing_date: str
+    description: str
+    
+class CaseResponse(BaseModel):
+    case_id: int
+    case_number: str
+    case_type: str
+    status: str
+    client_id: int
+    lawyer_id: int
+    filing_date: str
+    description: str
+
+class CaseStatusUpdate(BaseModel):
+    status: str
+
+class ClientCreate(BaseModel):
+    first_name: str
+    last_name: str
+    email: str
+    phone: str
+    address: str
+
+# Endpoints
+@app.get("/")
+def home():
+    return {"message": "Legal Case Management Backend is running"}
+
+@app.get("/cases")
+def fetch_cases():
+    try:
+        return get_all_cases()
+    except Exception as e:
+        print(f"Error fetching cases: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.get("/cases/{case_id}")
+def fetch_case_details(case_id: int):
+    try:
+        case = get_case_by_id(case_id)
+        if not case:
+            raise HTTPException(status_code=404, detail="Case not found")
+        return case
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error fetching case details: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.post("/cases")
+def create_case(case: CaseCreate):
+    try:
+        add_case(
+            case.case_number,
+            case.case_type,
+            case.client_id,
+            case.lawyer_id,
+            case.filing_date,
+            case.description
+        )
+        return {"message": "Case created successfully"}
+    except Exception as e:
+        print(f"Error creating case: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.put("/cases/{case_id}")
+def update_case(case_id: int, data: CaseStatusUpdate):
+    try:
+        update_case_status(case_id, data.status)
+        return {"message": "Case updated successfully"}
+    except Exception as e:
+        print(f"Error updating case: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.get("/clients")
+def fetch_clients():
+    try:
+        return get_clients()
+    except Exception as e:
+        print(f"Error fetching clients: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.post("/clients")
+def create_client(client: ClientCreate):
+    try:
+        add_client(
+            client.first_name,
+            client.last_name,
+            client.email,
+            client.phone,
+            client.address
+        )
+        return {"message": "Client created successfully"}
+    except Exception as e:
+        print(f"Error adding client: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.get("/lawyers")
+def fetch_lawyers():
+    try:
+        return get_lawyers()
+    except Exception as e:
+        print(f"Error fetching lawyers: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+# Start configuration for Railway/Render
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
