@@ -140,6 +140,7 @@ def add_lawyer(name, specialization):
 
     except Exception as e:
         print("Error adding lawyer:", e)
+        raise e
 
     finally:
         cursor.close()

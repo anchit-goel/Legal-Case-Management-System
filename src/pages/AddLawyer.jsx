@@ -18,9 +18,12 @@ const AddLawyer = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form)
             });
-            if (!res.ok) throw new Error('Failed to add lawyer');
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({}));
+            throw new Error(`Failed to add lawyer (${res.status}): ${body.detail || 'Unknown error'}`);
+            }
             navigate('/');
-        } catch (err) {
+        }  catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
