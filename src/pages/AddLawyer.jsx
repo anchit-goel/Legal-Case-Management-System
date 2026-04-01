@@ -9,7 +9,7 @@ const AddLawyer = () => {
     const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        if (e && e.preventDefault) e.preventDefault();
         setLoading(true);
         setError(null);
         try {
@@ -60,7 +60,7 @@ const AddLawyer = () => {
 
                 <div className="pt-4 flex gap-4">
                     <button type="button" onClick={() => navigate(-1)} className="px-6 py-3 font-bold text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors">Cancel</button>
-                    <button type="submit" disabled={loading} className="flex-1 bg-primary text-on-primary font-bold py-3 rounded-lg shadow-sm hover:shadow-primary/20 transition-all">
+                    <button type="button" onClick={handleSubmit} disabled={loading} className="flex-1 bg-primary text-on-primary font-bold py-3 rounded-lg shadow-sm hover:shadow-primary/20 transition-all">
                         {loading ? 'Filing...' : 'Authorize Counsel'}
                     </button>
                 </div>
