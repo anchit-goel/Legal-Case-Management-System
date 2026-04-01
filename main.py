@@ -141,15 +141,6 @@ def create_client(client: ClientCreate):
         print(f"Error adding client: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-class LawyerCreate(BaseModel):
-    name: str
-    specialization: str
-
-class HearingCreate(BaseModel):
-    case_id: int
-    hearing_date: str
-    notes: str
-
 @router.get("/lawyers")
 def fetch_lawyers():
     try:
