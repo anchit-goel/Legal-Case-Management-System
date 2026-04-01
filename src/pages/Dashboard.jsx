@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { BASE_URL } from '../api/config';
 
 const HearingRow = ({ time, period, title, location, type }) => (
     <div className="px-8 py-5 flex items-center group hover:bg-surface-container-low transition-colors">
