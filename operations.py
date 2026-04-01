@@ -129,8 +129,7 @@ def search_client(name):
 def add_lawyer(name, specialization):
     conn = get_connection()
     if conn is None:
-        print("Unable to connect to database")
-        return
+        raise RuntimeError("Unable to connect to database")
     cursor = conn.cursor()
 
     try:
@@ -323,8 +322,7 @@ def get_all_cases():
 def add_hearing(case_id, hearing_date, notes):
     conn = get_connection()
     if conn is None:
-        print("Unable to connect to database")
-        return
+        raise RuntimeError("Unable to connect to database")
     cursor = conn.cursor()
 
     try:
