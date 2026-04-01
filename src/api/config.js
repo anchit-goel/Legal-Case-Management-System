@@ -1,5 +1,1 @@
-let _base = import.meta.env.VITE_BACKEND_URL || '';
-if (_base && !_base.startsWith('http')) {
-	_base = `https://${_base}`;
-}
-export const BASE_URL = _base;
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? window.location.origin : 'http://localhost:8000');
