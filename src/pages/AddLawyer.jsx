@@ -12,7 +12,8 @@ const AddLawyer = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/lawyers`, {
+            const base = import.meta.env.VITE_BACKEND_URL || '/api';
+            const res = await fetch(`${base}/lawyers`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form)
