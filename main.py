@@ -2,11 +2,14 @@ from fastapi import FastAPI, HTTPException, APIRouter
 from operations import *
 from db import test_connection
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import os
 from typing import Optional
+from pathlib import Path
 
 app = FastAPI()
+BASE_DIR = Path(__file__).resolve().parent
 
 # Read FRONTEND_URL from environment for production CORS
 FRONTEND_URL = os.environ.get("FRONTEND_URL")
@@ -76,8 +79,8 @@ class HearingCreate(BaseModel):
 # Endpoints
 router = APIRouter()
 
-@router.get("/")
-def home():
+@router.get("/health")
+def health_check():
     return {"message": "Legal Case Management Backend is running"}
 
 @router.get("/cases")
@@ -192,11 +195,15 @@ def create_hearing(hearing: HearingCreate):
         print(f"Error adding hearing: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-app.include_router(router)
+@app.get("/")
+def serve_frontend():
+    return FileResponse(BASE_DIR / "index.html")
+
+
 app.include_router(router, prefix="/api")
 
-# Start configuration for Railway/Render
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    host = os.environ.get("HOST", "127.0.0.1")
+    uvicorn.run(app, host=host, port=port)
