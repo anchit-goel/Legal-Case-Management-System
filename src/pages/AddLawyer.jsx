@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../api/config';
 
 const AddLawyer = () => {
     const navigate = useNavigate();
@@ -12,8 +13,7 @@ const AddLawyer = () => {
         setLoading(true);
         setError(null);
         try {
-            const base = import.meta.env.VITE_BACKEND_URL || '/api';
-            const res = await fetch(`${base}/lawyers`, {
+            const res = await fetch(`${BASE_URL}/lawyers`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form)

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BASE_URL } from '../api/config';
 import { useNavigate } from 'react-router-dom';
 
 const CreateCase = () => {
@@ -22,8 +23,8 @@ const CreateCase = () => {
     useEffect(() => {
         setLoadingData(true);
         Promise.all([
-            fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/clients`).then(r => r.ok ? r.json() : []),
-            fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/lawyers`).then(r => r.ok ? r.json() : [])
+            fetch(`${BASE_URL}/clients`).then(r => r.ok ? r.json() : []),
+            fetch(`${BASE_URL}/lawyers`).then(r => r.ok ? r.json() : [])
         ])
             .then(([clientsData, lawyersData]) => {
                 setClients(clientsData || []);
@@ -50,7 +51,7 @@ const CreateCase = () => {
         setError(null);
         setSuccess(null);
 
-        fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/cases`, {
+        fetch(`${BASE_URL}/cases`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../api/config';
 
 const AddHearing = () => {
     const navigate = useNavigate();
@@ -10,7 +11,7 @@ const AddHearing = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/cases`)
+        fetch(`${BASE_URL}/cases`)
             .then(res => res.json())
             .then(data => {
                 setCases(Array.isArray(data) ? data : []);
@@ -27,7 +28,7 @@ const AddHearing = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/hearings`, {
+            const res = await fetch(`${BASE_URL}/hearings`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({...form, case_id: parseInt(form.case_id)})

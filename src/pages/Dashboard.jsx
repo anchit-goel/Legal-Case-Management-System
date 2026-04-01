@@ -36,8 +36,8 @@ const Dashboard = () => {
 
     useEffect(() => {
         Promise.all([
-            fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/dashboard-stats`).then(res => res.json()),
-            fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/hearings`).then(res => res.json())
+            fetch(`${BASE_URL}/dashboard-stats`).then(res => res.json()),
+            fetch(`${BASE_URL}/hearings`).then(res => res.json())
         ])
         .then(([statsData, hearingsData]) => {
             setStats(statsData || {});

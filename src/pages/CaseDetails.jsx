@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BASE_URL } from '../api/config';
 import { useParams, Link } from 'react-router-dom';
 
 const CaseDetails = () => {
@@ -16,7 +17,7 @@ const CaseDetails = () => {
 
         setLoading(true);
         setError(null);
-        fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/cases/${id}`)
+        fetch(`${BASE_URL}/cases/${id}`)
             .then(res => {
                 if (!res.ok) {
                     if (res.status === 404) {

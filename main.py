@@ -8,10 +8,17 @@ from typing import Optional
 
 app = FastAPI()
 
-# Enable CORS for all domains for initial deployment
+# Read FRONTEND_URL from environment for production CORS
+FRONTEND_URL = os.environ.get("FRONTEND_URL")
+if FRONTEND_URL:
+    allowed_origins = [FRONTEND_URL]
+else:
+    # Fallback to wildcard for local development when FRONTEND_URL not provided
+    allowed_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -19,7 +26,8 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup_event():
-    print("Initializing Database...")
+    print("Initializing Backend...")
+    print(f"FRONTEND_URL={FRONTEND_URL}")
     ok, ver = test_connection()
     if ok:
         print(f"Database Connected. MySQL Version: {ver}")

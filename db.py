@@ -7,38 +7,53 @@ from dotenv import load_dotenv
 # Load environment variables from .env if present (for local dev)
 load_dotenv()
 
+
 def get_connection():
-    """Returns a MySQL connection using either MYSQL_URL or individual components."""
+    """Returns a MySQL connection using DB_* environment variables.
+
+    Production deployment must set: DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
+    For backwards compatibility, MYSQL_* env names are also supported.
+    If DB_HOST is not set, this function will return None instead of connecting to localhost.
+    """
     try:
-        # Standardize for Railway environment names (MYSQLHOST, MYSQLPORT, etc.)
-        MYSQL_HOST = os.environ.get("MYSQLHOST", os.environ.get("MYSQL_HOST", "localhost"))
-        MYSQL_PORT = int(os.environ.get("MYSQLPORT", os.environ.get("MYSQL_PORT", 3306)))
-        MYSQL_USER = os.environ.get("MYSQLUSER", os.environ.get("MYSQL_USER", "root"))
-        MYSQL_PASSWORD = os.environ.get("MYSQLPASSWORD", os.environ.get("MYSQL_PASSWORD", ""))
-        MYSQL_DB = os.environ.get("MYSQLDATABASE", os.environ.get("MYSQL_DATABASE", "legal_db"))
-        
+        # Prefer DB_* environment variables (required in production)
+        DB_HOST = os.environ.get("DB_HOST") or os.environ.get("MYSQLHOST") or os.environ.get("MYSQL_HOST")
+        if not DB_HOST:
+            print("DB_HOST not set; skipping DB connection (set DB_HOST in your environment)")
+            return None
+
+        DB_PORT = int(os.environ.get("DB_PORT") or os.environ.get("MYSQLPORT") or os.environ.get("MYSQL_PORT", 3306))
+        DB_USER = os.environ.get("DB_USER") or os.environ.get("MYSQLUSER") or os.environ.get("MYSQL_USER")
+        DB_PASSWORD = os.environ.get("DB_PASSWORD") or os.environ.get("MYSQLPASSWORD") or os.environ.get("MYSQL_PASSWORD")
+        DB_NAME = os.environ.get("DB_NAME") or os.environ.get("MYSQLDATABASE") or os.environ.get("MYSQL_DATABASE")
+
         try:
             connection = mysql.connector.connect(
-                host=MYSQL_HOST, port=MYSQL_PORT, user=MYSQL_USER,
-                password=MYSQL_PASSWORD, database=MYSQL_DB,
-                auth_plugin='mysql_native_password', connection_timeout=10
+                host=DB_HOST,
+                port=DB_PORT,
+                user=DB_USER,
+                password=DB_PASSWORD,
+                database=DB_NAME,
+                auth_plugin='mysql_native_password',
+                connection_timeout=10,
             )
             return connection
         except Error as err:
-            if err.errno == 1049: # Unknown database
+            # If database does not exist, attempt to create it then reconnect
+            if getattr(err, 'errno', None) == 1049 and DB_NAME:
                 temp_conn = mysql.connector.connect(
-                    host=MYSQL_HOST, port=MYSQL_PORT, user=MYSQL_USER,
-                    password=MYSQL_PASSWORD, auth_plugin='mysql_native_password', connection_timeout=10
+                    host=DB_HOST, port=DB_PORT, user=DB_USER,
+                    password=DB_PASSWORD, auth_plugin='mysql_native_password', connection_timeout=10
                 )
                 temp_cursor = temp_conn.cursor()
-                temp_cursor.execute(f"CREATE DATABASE IF NOT EXISTS {MYSQL_DB}")
+                temp_cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
                 temp_conn.commit()
                 temp_cursor.close()
                 temp_conn.close()
-                
+
                 return mysql.connector.connect(
-                    host=MYSQL_HOST, port=MYSQL_PORT, user=MYSQL_USER,
-                    password=MYSQL_PASSWORD, database=MYSQL_DB,
+                    host=DB_HOST, port=DB_PORT, user=DB_USER,
+                    password=DB_PASSWORD, database=DB_NAME,
                     auth_plugin='mysql_native_password', connection_timeout=10
                 )
             else:

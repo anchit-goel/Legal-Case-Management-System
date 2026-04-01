@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { BASE_URL } from '../api/config';
 import { Link } from 'react-router-dom';
 
 const Clients = () => {
@@ -9,7 +10,7 @@ const Clients = () => {
     const fetchClients = () => {
         setLoading(true);
         setError(null);
-        fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://legal-case-management-system-production.up.railway.app'}/clients`)
+        fetch(`${BASE_URL}/clients`)
             .then(res => {
                 if (!res.ok) throw new Error('Failed to fetch clients');
                 return res.json();
