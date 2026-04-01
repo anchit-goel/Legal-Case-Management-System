@@ -55,10 +55,10 @@ const Sidebar = () => (
                 <span className="font-headline text-sm font-medium tracking-tight">Support</span>
             </NavLink>
             <div className="flex items-center gap-3 px-4 py-4 mt-2 border-t border-slate-300/30">
-                <img className="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4KjKiU1FTnZVKQsvwWBIye56s0UDnzA3dhZLkExbnzpKVGbvZHZJ9VUu7j_GOlcwzLB9ydgr1YCJMGCKWv3XpMYhRJzjEcmVdmKgBICfY4roMkXoqgMFhlEqShZQrlo2ZzYtP_yY3kP4iZSLRtS2GFhiEsXWykPPmOCHeyUnvEdk5N4yuq0zwnG95N5lZTpjlsdGjc-PMieLhBl9bcZp2EI1Vzd5tQ59f05oyP_rLbyqSPotRsRumTMU4lj--gqvztcMvCp9bEZ9y" alt="Profile" />
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex flex-col items-center justify-center text-primary font-bold text-xs font-headline">A</div>
                 <div className="overflow-hidden">
-                    <p className="text-xs font-bold truncate">Julian Thorne</p>
-                    <p className="text-[10px] text-slate-500">Managing Partner</p>
+                    <p className="text-xs font-bold truncate">Academic User</p>
+                    <p className="text-[10px] text-slate-500">System Administrator</p>
                 </div>
             </div>
         </div>

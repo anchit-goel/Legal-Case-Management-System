@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, APIRouter
 from operations import *
+from db import test_connection
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
@@ -15,6 +16,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+def startup_event():
+    print("Initializing Database...")
+    ok, ver = test_connection()
+    if ok:
+        print(f"Database Connected. MySQL Version: {ver}")
+    else:
+        print("Database Connection Failed!")
 
 class CaseCreate(BaseModel):
     case_number: str
@@ -130,6 +140,15 @@ def create_client(client: ClientCreate):
     except Exception as e:
         print(f"Error adding client: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
+class LawyerCreate(BaseModel):
+    name: str
+    specialization: str
+
+class HearingCreate(BaseModel):
+    case_id: int
+    hearing_date: str
+    notes: str
 
 @router.get("/lawyers")
 def fetch_lawyers():

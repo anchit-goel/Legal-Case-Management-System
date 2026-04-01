@@ -23,7 +23,7 @@ def client_exists(email):
 def add_client(first_name, last_name, email, phone, address):
     conn = get_connection()
     if conn is None:
-        return
+        raise Exception("Cannot connect to Database (ensure MYSQLHOST is configured)")
     cursor = conn.cursor()
 
     try:
@@ -37,6 +37,7 @@ def add_client(first_name, last_name, email, phone, address):
 
     except Exception as e:
         print("Error adding client:", e)
+        raise e
 
     finally:
         cursor.close()
