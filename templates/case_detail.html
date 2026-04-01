@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Case Details</h2>
+<div class="card card-table">
+  <div class="card-header">Complete Case Information</div>
+  <table>
+    <tr><th style="width:28%">Field</th><th style="width:72%">Value</th></tr>
+    <tr><td>Case ID</td><td>{{ case_item.case_id }}</td></tr>
+    <tr><td>Case Number</td><td>{{ case_item.case_number }}</td></tr>
+    <tr><td>Case Type</td><td>{{ case_item.case_type }}</td></tr>
+    <tr><td>Status</td><td>{{ case_item.status }}</td></tr>
+    <tr><td>Filing Date</td><td>{{ case_item.filing_date }}</td></tr>
+    <tr><td>Description</td><td>{{ case_item.description }}</td></tr>
+    <tr><td>Client Name</td><td>{{ case_item.client_name }}</td></tr>
+    <tr><td>Client Email</td><td>{{ case_item.client_email }}</td></tr>
+    <tr><td>Client Phone</td><td>{{ case_item.client_phone }}</td></tr>
+    <tr><td>Client Address</td><td>{{ case_item.client_address }}</td></tr>
+    <tr><td>Lawyer Name</td><td>{{ case_item.lawyer_name }}</td></tr>
+    <tr><td>Lawyer Specialization</td><td>{{ case_item.lawyer_specialization }}</td></tr>
+  </table>
+</div>
+
+<div class="card card-table">
+  <div class="card-header">Hearings for This Case</div>
+  <table>
+    <tr><th style="width:12%">Hearing ID</th><th style="width:28%">Date</th><th style="width:60%">Notes</th></tr>
+    {% for h in hearings %}
+    <tr>
+      <td>{{ h.hearing_id }}</td>
+      <td>{{ h.hearing_date }}</td>
+      <td>{{ h.notes }}</td>
+    </tr>
+    {% endfor %}
+    {% if not hearings %}
+    <tr><td colspan="3">No hearings scheduled for this case.</td></tr>
+    {% endif %}
+  </table>
+</div>
+
+{% if session.get('role') in ['lawyer', 'client'] %}
+<div class="card card-form">
+  <div class="card-header">Submit Feedback</div>
+  <form method="post" action="{{ url_for('add_case_feedback_page', case_id=case_item.case_id) }}">
+    {{ csrf_input()|safe }}
+    <label>Rating</label>
+    <select name="rating" required>
+      <option value="5">5 - Excellent</option>
+      <option value="4">4 - Good</option>
+      <option value="3">3 - Average</option>
+      <option value="2">2 - Poor</option>
+      <option value="1">1 - Very Poor</option>
+    </select>
+    <textarea name="feedback_text" placeholder="Write your feedback..." required></textarea>
+    <button type="submit">Submit Feedback</button>
+  </form>
+</div>
+
+<div class="card card-form">
+  <div class="card-header">Appeal for Date Change</div>
+  <form method="post" action="{{ url_for('request_date_change_page', case_id=case_item.case_id) }}">
+    {{ csrf_input()|safe }}
+    <label>Requested New Date (YYYY-MM-DD)</label>
+    <input name="requested_date" type="date" required>
+    <label>Reason</label>
+    <textarea name="reason" placeholder="Explain why this date change is needed" required></textarea>
+    <button type="submit">Submit Date Change Request</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="card card-table">
+  <div class="card-header">Feedback History</div>
+  <table>
+    <tr><th style="width:12%">ID</th><th style="width:12%">Role</th><th style="width:10%">Rating</th><th style="width:46%">Feedback</th><th style="width:20%">Created</th></tr>
+    {% for f in feedback_items %}
+    <tr>
+      <td>{{ f.feedback_id }}</td>
+      <td>{{ f.author_role }}</td>
+      <td>{{ f.rating }}</td>
+      <td>{{ f.feedback_text }}</td>
+      <td>{{ f.created_at }}</td>
+    </tr>
+    {% endfor %}
+    {% if not feedback_items %}
+    <tr><td colspan="5">No feedback submitted yet.</td></tr>
+    {% endif %}
+  </table>
+</div>
+{% endblock %}

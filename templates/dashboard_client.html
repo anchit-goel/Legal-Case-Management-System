@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Client Dashboard</h2>
+<div class="grid grid-2">
+  <div class="card card-table">
+    <strong>Your Cases</strong>
+    <div style="font-size: 24px; margin-top: 10px;">{{ data.cases }}</div>
+    <table>
+      <tr><th>Case ID</th><th>Case #</th><th>Type</th><th>Status</th><th>Action</th></tr>
+      {% for c in data.my_cases %}
+      <tr>
+        <td>{{ c.case_id }}</td><td>{{ c.case_number }}</td><td>{{ c.case_type }}</td><td>{{ c.status }}</td>
+        <td><a href="{{ url_for('view_case_page', case_id=c.case_id) }}"><button type="button">View Case</button></a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="card card-table">
+    <strong>Your Hearings</strong>
+    <table>
+      <tr><th>Hearing ID</th><th>Case ID</th><th>Date</th><th>Notes</th></tr>
+      {% for h in data.hearings %}
+      <tr>
+        <td>{{ h.hearing_id }}</td>
+        <td>{{ h.case_id }}</td>
+        <td>{{ h.hearing_date }}</td>
+        <td>{{ h.notes }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Cases</h2>
+<div class="actions" style="margin-bottom:10px;">
+  <a href="{{ url_for('export_cases') }}"><button type="button">Export CSV</button></a>
+</div>
+<div class="card card-form">
+  <div class="card-header">Create Case</div>
+  <form method="post" class="grid grid-2">
+    {{ csrf_input()|safe }}
+    <input name="case_number" placeholder="Case number" required>
+    <input name="case_type" placeholder="Case type" required>
+    <select name="client_id" required>
+      <option value="">Client</option>
+      {% for c in clients %}<option value="{{ c.client_id }}">{{ c.first_name }} {{ c.last_name }}</option>{% endfor %}
+    </select>
+    <select name="lawyer_id" required>
+      <option value="">Lawyer</option>
+      {% for l in lawyers %}<option value="{{ l.lawyer_id }}">{{ l.name }}</option>{% endfor %}
+    </select>
+    <input type="date" name="filing_date" required>
+    <textarea name="description" placeholder="Description" required></textarea>
+    <button type="submit">Create</button>
+  </form>
+</div>
+<div class="card card-table">
+  <div class="card-header">Case Records (Edit/Delete)</div>
+  <form method="get" class="actions">
+    <input name="q" value="{{ q }}" placeholder="Search by case ID, number, or type">
+    <button type="submit">Search</button>
+  </form>
+  <table>
+    <tr>
+      <th style="width:5%">ID</th><th style="width:12%">Case#</th><th style="width:12%">Type</th><th style="width:8%">Status</th><th style="width:9%">Client</th><th style="width:9%">Lawyer</th><th style="width:10%">Date</th><th style="width:12%">Description</th><th style="width:23%">Actions</th>
+    </tr>
+    {% for c in cases %}
+    <tr>
+      <form method="post" action="{{ url_for('edit_case_page', case_id=c.case_id) }}">{{ csrf_input()|safe }}
+        <td>{{ c.case_id }}</td>
+        <td><input name="case_number" value="{{ c.case_number }}"></td>
+        <td><input name="case_type" value="{{ c.case_type }}"></td>
+        <td>
+          <select name="status">
+            <option value="Active" {{ 'selected' if c.status == 'Active' else '' }}>Active</option>
+            <option value="Closed" {{ 'selected' if c.status == 'Closed' else '' }}>Closed</option>
+            <option value="Pending" {{ 'selected' if c.status == 'Pending' else '' }}>Pending</option>
+          </select>
+        </td>
+        <td><input name="client_id" type="number" value="{{ c.client_id or '' }}"></td>
+        <td><input name="lawyer_id" type="number" value="{{ c.lawyer_id or '' }}"></td>
+        <td><input name="filing_date" type="date" value="{{ (c.filing_date or '')[:10] }}"></td>
+        <td><input name="description" value="{{ c.description or '' }}"></td>
+        <td class="actions"><button type="submit">Save</button></form>
+          <a href="{{ url_for('view_case_page', case_id=c.case_id) }}"><button type="button">View</button></a>
+          <a href="{{ url_for('case_history_page', case_id=c.case_id) }}"><button type="button">History</button></a>
+          <form method="post" action="{{ url_for('delete_case_page', case_id=c.case_id) }}" onsubmit="return confirm('Delete case?')">{{ csrf_input()|safe }}<button class="danger" type="submit">Delete</button></form>
+        </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <div class="pagination">
+    {% for p in range(1, total_pages + 1) %}
+      <a class="{{ 'current' if p == page else '' }}" href="{{ url_for('cases_page', page=p, q=q) }}">{{ p }}</a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

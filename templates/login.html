@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card card-form" style="max-width: 520px; margin: 30px auto;">
+  <div class="card-header">Login Console</div>
+  <form method="post">
+    {{ csrf_input()|safe }}
+    <label>Role</label>
+    <select name="role" required>
+      <option value="">Select role</option>
+      <option value="court">Court</option>
+      <option value="lawyer">Lawyer</option>
+      <option value="client">Client</option>
+    </select>
+
+    <label>Username</label>
+    <input name="username" placeholder="Email for lawyer/client, username for court" required>
+
+    <label>Password</label>
+    <input name="password" type="password" required>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <p>New client? <a href="{{ url_for('register_client_page') }}">Register here</a> | New lawyer? <a href="{{ url_for('register_lawyer_page') }}">Register here</a></p>
+</div>
+{% endblock %}

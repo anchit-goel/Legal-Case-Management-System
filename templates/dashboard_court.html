@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Court Dashboard</h2>
+<div class="grid grid-3">
+  <div class="card card-table"><strong>Total Clients</strong><div>{{ stats.clients }}</div></div>
+  <div class="card card-table"><strong>Total Lawyers</strong><div>{{ stats.lawyers }}</div></div>
+  <div class="card card-table"><strong>Total Cases</strong><div>{{ stats.cases }}</div></div>
+  <div class="card card-table"><strong>Active Cases</strong><div>{{ stats.active_cases }}</div></div>
+  <div class="card card-table"><strong>Total Hearings</strong><div>{{ stats.hearings }}</div></div>
+</div>
+<div class="card card-table">
+  <p>Use the top menu to manage Clients, Lawyers, Cases, and Hearings.</p>
+</div>
+{% endblock %}

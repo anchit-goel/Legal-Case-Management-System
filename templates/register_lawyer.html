@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card card-form" style="max-width: 600px; margin: 30px auto;">
+  <h2>Lawyer Registration</h2>
+  <form method="post">
+    {{ csrf_input()|safe }}
+    <input name="name" placeholder="Full name" required>
+    <input name="specialization" placeholder="Specialization" required>
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="password" type="password" placeholder="Password" required>
+    <input name="confirm_password" type="password" placeholder="Confirm password" required>
+    <button type="submit">Register Lawyer</button>
+  </form>
+</div>
+{% endblock %}

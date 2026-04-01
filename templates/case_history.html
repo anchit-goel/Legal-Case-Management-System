@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Case History</h2>
+<div class="card card-table">
+  {% if case_item %}
+    <p><strong>Case:</strong> {{ case_item.case_number }} ({{ case_item.case_type }})</p>
+  {% endif %}
+  <table>
+    <tr><th>ID</th><th>Changed At</th><th>Role</th><th>User ID</th><th>Field</th><th>Old</th><th>New</th></tr>
+    {% for h in history %}
+    <tr>
+      <td>{{ h.history_id }}</td>
+      <td>{{ h.changed_at }}</td>
+      <td>{{ h.changed_by_role }}</td>
+      <td>{{ h.changed_by_id }}</td>
+      <td>{{ h.field_name }}</td>
+      <td>{{ h.old_value }}</td>
+      <td>{{ h.new_value }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

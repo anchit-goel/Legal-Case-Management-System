@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Legal Case Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="top">
+    <div><strong>Legal Case Management</strong></div>
+    <div>
+      {% if session.get('role') == 'court' %}
+      <a class="{{ 'active' if request.endpoint == 'court_dashboard_page' else '' }}" href="{{ url_for('court_dashboard_page') }}">Court Dashboard</a>
+      <a class="{{ 'active' if request.endpoint == 'clients_page' else '' }}" href="{{ url_for('clients_page') }}">Clients</a>
+      <a class="{{ 'active' if request.endpoint == 'lawyers_page' else '' }}" href="{{ url_for('lawyers_page') }}">Lawyers</a>
+      <a class="{{ 'active' if request.endpoint == 'cases_page' else '' }}" href="{{ url_for('cases_page') }}">Cases</a>
+      <a class="{{ 'active' if request.endpoint == 'hearings_page' else '' }}" href="{{ url_for('hearings_page') }}">Hearings</a>
+      <a class="{{ 'active' if request.endpoint == 'date_change_requests_page' else '' }}" href="{{ url_for('date_change_requests_page') }}">Date Requests</a>
+      <a class="{{ 'active' if request.endpoint == 'notifications_page' else '' }}" href="{{ url_for('notifications_page') }}">Notifications</a>
+      <a class="{{ 'active' if request.endpoint == 'audit_page' else '' }}" href="{{ url_for('audit_page') }}">Audit</a>
+      {% elif session.get('role') == 'lawyer' %}
+      <a class="{{ 'active' if request.endpoint == 'lawyer_dashboard_page' else '' }}" href="{{ url_for('lawyer_dashboard_page') }}">Lawyer Dashboard</a>
+      <a class="{{ 'active' if request.endpoint == 'notifications_page' else '' }}" href="{{ url_for('notifications_page') }}">Notifications</a>
+      {% elif session.get('role') == 'client' %}
+      <a class="{{ 'active' if request.endpoint == 'client_dashboard_page' else '' }}" href="{{ url_for('client_dashboard_page') }}">Client Dashboard</a>
+      <a class="{{ 'active' if request.endpoint == 'notifications_page' else '' }}" href="{{ url_for('notifications_page') }}">Notifications</a>
+      {% endif %}
+      {% if session.get('role') %}<a href="{{ url_for('logout') }}">Logout</a>{% endif %}
+    </div>
+  </div>
+
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-{{ category if category in ['ok', 'error'] else 'ok' }}">
+            <span>{{ message }}</span>
+            <span class="flash-close" onclick="this.parentElement.remove()">&times;</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

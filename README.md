@@ -1,36 +1,53 @@
 
-# Legal Case Management System (FastAPI + Vanilla JS)
+# Legal Case Management System (Flask + Jinja Templates)
 
-This project now uses a Python-only stack:
-- Backend: FastAPI (`main.py`)
-- Frontend: Static `index.html` served by FastAPI
-- Deployment: Vercel Python runtime (`api/index.py`)
+This project is now a pure Python Flask application:
+- Backend: Flask (`main.py`)
+- Frontend: Server-rendered HTML templates (`templates/`)
+- Database: SQLite (`legal_local.db`)
 
-No Node.js or npm install is required.
+No React, Vite, Next.js, or npm tooling is required.
 
 ## Environment Variables
 
-Set these for DB connectivity:
-- `MYSQL_HOST`
-- `MYSQL_PORT`
-- `MYSQL_USER`
-- `MYSQL_PASSWORD`
-- `MYSQL_DATABASE`
-- `FRONTEND_URL` (optional, for tighter CORS)
+- `SQLITE_PATH` (optional, default: `legal_local.db`)
+- `FLASK_SECRET_KEY` (optional)
+- `COURT_USERNAME` (required for production)
+- `COURT_PASSWORD` (required for production)
+- `FLASK_DEBUG` (`0` by default)
+- `HOST` (optional, default: `127.0.0.1`)
+- `PORT` (optional, default: `8000`)
 
 ## Local Run
 
 ```bash
-uvicorn main:app --reload
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+python main.py
 ```
 
-Open `http://127.0.0.1:8000`.
+Open `http://127.0.0.1:8000/login`.
 
-## Vercel Deployment
+## Login Roles
 
-1. Push repository to GitHub.
-2. Import project in Vercel.
-3. Add environment variables listed above.
-4. Deploy.
+- Court: from env vars `COURT_USERNAME` and `COURT_PASSWORD`
+- Lawyers and Clients: use registration screens, then login.
 
-`vercel.json` routes all traffic to `api/index.py`, which serves both the frontend (`/`) and API (`/api/*`).
+## Features in UI
+
+- Login console
+- Client registration and lawyer registration
+- Forgot/reset password token flow
+- Separate dashboards for court, lawyer, and client
+- Create, edit, and delete controls for clients, lawyers, cases, and hearings (court role)
+- Case history timeline and audit log screen
+- CSV export for cases
+
+## API (HTTP Basic Auth)
+
+Court credentials are required as HTTP Basic Auth.
+
+- `GET /api/cases`
+- `GET /api/cases/<case_id>`
+- `GET /api/hearings`

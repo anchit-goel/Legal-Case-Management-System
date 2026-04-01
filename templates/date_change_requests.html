@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Date Change Requests</h2>
+<div class="card card-table">
+  <form method="get" class="actions">
+    <select name="status">
+      <option value="" {{ 'selected' if not status else '' }}>All</option>
+      <option value="Pending" {{ 'selected' if status == 'Pending' else '' }}>Pending</option>
+      <option value="Approved" {{ 'selected' if status == 'Approved' else '' }}>Approved</option>
+      <option value="Rejected" {{ 'selected' if status == 'Rejected' else '' }}>Rejected</option>
+    </select>
+    <button type="submit">Filter</button>
+  </form>
+  <table>
+    <tr><th>ID</th><th>Case</th><th>Requested By</th><th>Current Date</th><th>Requested Date</th><th>Reason</th><th>Status</th><th>Court Note</th><th>Action</th></tr>
+    {% for r in requests %}
+    <tr>
+      <td>{{ r.request_id }}</td>
+      <td><a href="{{ url_for('view_case_page', case_id=r.case_id) }}">#{{ r.case_id }}</a></td>
+      <td>{{ r.requested_by_role }} ({{ r.requested_by_id }})</td>
+      <td>{{ r.current_date }}</td>
+      <td>{{ r.requested_date }}</td>
+      <td>{{ r.reason }}</td>
+      <td>{{ r.status }}</td>
+      <td>{{ r.court_note or '' }}</td>
+      <td>
+        {% if r.status == 'Pending' %}
+        <form method="post" action="{{ url_for('resolve_date_change_request_page', request_id=r.request_id) }}">
+          {{ csrf_input()|safe }}
+          <select name="status">
+            <option value="Approved">Approve</option>
+            <option value="Rejected">Reject</option>
+          </select>
+          <input name="court_note" placeholder="Court note">
+          <button type="submit">Submit</button>
+        </form>
+        {% else %}
+        Resolved
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    {% if not requests %}
+    <tr><td colspan="9">No date change requests found.</td></tr>
+    {% endif %}
+  </table>
+</div>
+{% endblock %}

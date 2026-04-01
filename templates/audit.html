@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Audit Log</h2>
+<div class="card card-table">
+  <table>
+    <tr><th>ID</th><th>Timestamp</th><th>Role</th><th>User ID</th><th>Action</th><th>Entity</th><th>Entity ID</th><th>Details</th></tr>
+    {% for l in logs %}
+    <tr>
+      <td>{{ l.log_id }}</td>
+      <td>{{ l.timestamp }}</td>
+      <td>{{ l.user_role }}</td>
+      <td>{{ l.user_id }}</td>
+      <td>{{ l.action }}</td>
+      <td>{{ l.entity }}</td>
+      <td>{{ l.entity_id }}</td>
+      <td>{{ l.details }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

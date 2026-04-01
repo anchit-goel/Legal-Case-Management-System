@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card card-form" style="max-width: 600px; margin: 30px auto;">
+  <h2>Client Registration</h2>
+  <form method="post">
+    {{ csrf_input()|safe }}
+    <input name="first_name" placeholder="First name" required>
+    <input name="last_name" placeholder="Last name" required>
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="phone" placeholder="Phone" required>
+    <textarea name="address" placeholder="Address" required></textarea>
+    <input name="password" type="password" placeholder="Password" required>
+    <input name="confirm_password" type="password" placeholder="Confirm password" required>
+    <button type="submit">Register Client</button>
+  </form>
+</div>
+{% endblock %}

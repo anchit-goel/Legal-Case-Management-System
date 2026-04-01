@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Notifications</h2>
+<div class="actions" style="margin-bottom:10px;">
+  <form method="post" action="{{ url_for('notifications_read_all_page') }}">
+    {{ csrf_input()|safe }}
+    <button type="submit">Mark All Read</button>
+  </form>
+</div>
+<div class="card card-table">
+  <table>
+    <tr><th style="width:8%">ID</th><th style="width:12%">Case</th><th style="width:18%">Title</th><th style="width:36%">Message</th><th style="width:16%">Created</th><th style="width:10%">Action</th></tr>
+    {% for n in notifications %}
+    <tr style="{{ 'font-weight:bold;' if n.is_read == 0 else '' }}">
+      <td>{{ n.notification_id }}</td>
+      <td>{% if n.case_id %}<a href="{{ url_for('view_case_page', case_id=n.case_id) }}">#{{ n.case_id }}</a>{% else %}-{% endif %}</td>
+      <td>{{ n.title }}</td>
+      <td>{{ n.message }}</td>
+      <td>{{ n.created_at }}</td>
+      <td>
+        {% if n.is_read == 0 %}
+        <form method="post" action="{{ url_for('notifications_read_one_page', notification_id=n.notification_id) }}">
+          {{ csrf_input()|safe }}
+          <button type="submit">Mark Read</button>
+        </form>
+        {% else %}
+        Read
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    {% if not notifications %}
+    <tr><td colspan="6">No notifications yet.</td></tr>
+    {% endif %}
+  </table>
+</div>
+{% endblock %}
