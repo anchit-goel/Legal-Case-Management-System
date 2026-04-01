@@ -343,18 +343,24 @@ def add_hearing(case_id, hearing_date, notes):
         conn.close()
 
 
-def get_hearings():
+def get_hearings(case_id=None):
     conn = get_connection()
     if conn is None:
         return []
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
 
-    cursor.execute("SELECT * FROM hearings")
+    if case_id is None:
+        cursor.execute("SELECT hearing_id, case_id, hearing_date, notes FROM hearings ORDER BY hearing_date DESC")
+    else:
+        cursor.execute(
+            "SELECT hearing_id, case_id, hearing_date, notes FROM hearings WHERE case_id = %s ORDER BY hearing_date DESC",
+            (case_id,)
+        )
     data = cursor.fetchall()
 
     cursor.close()
     conn.close()
-    return data
+    return data if data else []
 
 
 # ---------------- REPORTS ----------------

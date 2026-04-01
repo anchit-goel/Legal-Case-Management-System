@@ -3,6 +3,7 @@ from operations import *
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
+from typing import Optional
 
 app = FastAPI()
 
@@ -42,6 +43,17 @@ class ClientCreate(BaseModel):
     email: str
     phone: str
     address: str
+
+
+class LawyerCreate(BaseModel):
+    name: str
+    specialization: str
+
+
+class HearingCreate(BaseModel):
+    case_id: int
+    hearing_date: str
+    notes: Optional[str] = None
 
 # Endpoints
 router = APIRouter()
@@ -125,6 +137,41 @@ def fetch_lawyers():
         return get_lawyers()
     except Exception as e:
         print(f"Error fetching lawyers: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+@router.post("/lawyers")
+def create_lawyer(lawyer: LawyerCreate):
+    try:
+        add_lawyer(lawyer.name, lawyer.specialization)
+        return {"message": "Lawyer added successfully"}
+    except Exception as e:
+        print(f"Error adding lawyer: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+@router.get("/hearings")
+def fetch_hearings(case_id: Optional[int] = None):
+    try:
+        return get_hearings(case_id)
+    except Exception as e:
+        print(f"Error fetching hearings: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+@router.post("/hearings")
+def create_hearing(hearing: HearingCreate):
+    try:
+        case = get_case_by_id(hearing.case_id)
+        if not case:
+            raise HTTPException(status_code=404, detail="Case not found")
+
+        add_hearing(hearing.case_id, hearing.hearing_date, hearing.notes)
+        return {"message": "Hearing added successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error adding hearing: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 app.include_router(router)
